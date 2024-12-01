@@ -3,3 +3,4 @@ pinecone-client
 langchain
 streamlit
 asyncio
+googleapis-common-protos
