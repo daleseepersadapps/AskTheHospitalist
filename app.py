@@ -1,21 +1,18 @@
 import os
-os.environ["OPENAI_API_KEY"] = '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'
 import openai
 from openai import OpenAI
 from pinecone.grpc import PineconeGRPC as Pinecone
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.llms import OpenAI
 import streamlit as st
-from langchain import OpenAI 
-from langchain.chat_models import ChatOpenAI
+from langchain import OpenAI
 import asyncio
 from openai import AsyncOpenAI
 import json
-import os
-from streamlit_lottie import st_lottie
 
+os.environ["OPENAI_API_KEY"] = st.secrets["APIKey_OpenAI"]
 client = OpenAI()
-client = AsyncOpenAI(api_key=('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'))
+client = AsyncOpenAI(api_key=st.secrets["APIKey_OpenAI"])
 
 st.set_page_config(page_icon="💊", page_title="Ask The Hospitalist")
 hide_st_style = """
@@ -28,8 +25,8 @@ hide_st_style = """
             """
 st.markdown(hide_st_style, unsafe_allow_html=True)
 
-OPENAI_API_KEY = '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'
-PINECONE_API_KEY = 'fcf373d6-9ee5-48e0-a60e-197071abeca3'
+OPENAI_API_KEY = st.secrets["APIKey_OpenAI"]
+PINECONE_API_KEY = st.secrets["APIKey_Pinecone"]
 #PINECONE_API_ENV = 'us-east-1'
 embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
 
@@ -42,10 +39,10 @@ hide_st_style = """
             </style>
             """
 
-pc = Pinecone(api_key='fcf373d6-9ee5-48e0-a60e-197071abeca3', GRPC_DNS_RESOLVER="native")
+pc = Pinecone(api_key=st.secrets["APIKey_Pinecone"], GRPC_DNS_RESOLVER="native")
 index = pc.Index("uptodate")
 
-openai.api_key = "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"
+openai.api_key = st.secrets["APIKey_OpenAI"]
 
 st.title("Ask the Hospitalist")
 query = st.text_area("Ask me any Internal Medicine Board MCQ", height=300)
@@ -80,13 +77,13 @@ eg:
     """
 
 async def main():
-    if query != "" :
+    if query.strip() :
         with st.spinner(text="Thinking... This can take up to 1 min. Please do not click ask again.",):
              #STEP 1: GENERATE REASONING
             response = await client.chat.completions.create(
                 model="o1-preview",
                 messages=[
-                    {"role": "user", "content": primer_for_extracting_reasoning + "Question: " + query}
+                    {"role": "user", "content": primer_for_extracting_reasoning + "\nQuestion: " + query}
                 ]
             )
             reasoning = response.choices[0].message.content.strip()  # Initial response with questions unstructured
