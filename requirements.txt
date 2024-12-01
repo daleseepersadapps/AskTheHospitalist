@@ -4,3 +4,4 @@ langchain
 streamlit
 asyncio
 googleapis-common-protos
+grpcio grpcio-tools googleapis-common-protos
