@@ -81,7 +81,7 @@ async def main():
         with st.spinner(text="Thinking... This can take up to 1 min. Please do not click ask again.",):
              #STEP 1: GENERATE REASONING
             response = await client.chat.completions.create(
-                model="o1-preview",
+                model="o3-mini",
                 messages=[
                     {"role": "user", "content": primer_for_extracting_reasoning + "\nQuestion: " + query}
                 ]
